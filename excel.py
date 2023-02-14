@@ -2,22 +2,33 @@ import tkinter as tk
 
 # Create the main window
 root = tk.Tk()
-root.title("Sing-in Screen")
+root.title("excel Screen")
 root.attributes("-fullscreen", True)
 
 
 class Screen:
+    def convert(self):
+        import pandas as pd
+        import sqlite3
+
+        # Connect to the SQLite database
+        conn = sqlite3.connect('teste_database.db')
+
+        # Query the database and create a DataFrame from the results
+        df = pd.read_sql_query("SELECT * FROM user", conn)
+
+        # Write the DataFrame to an Excel file
+        df.to_excel('output.xlsx', index=False)
     def excel(self):
         import xlsxwriter
         workbook = xlsxwriter.Workbook("sales_data.xlsx")
-        teste = 1 
 
         # Add a new worksheet to the file
         worksheet = workbook.add_worksheet()
         username = self.username_entry.get()
         # Write data to the worksheet
         worksheet.write("A1", username)
-        worksheet.write("A2", teste)
+        worksheet.write("A2", "teste")
         worksheet.write("A3", "Sales")
         worksheet.write("B1", 1000)
         worksheet.write("B2", "Apples")

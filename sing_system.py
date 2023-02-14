@@ -1,5 +1,6 @@
 import tkinter as tk
-
+import hashlib
+import sqlite3
 # Create the main window
 root = tk.Tk()
 root.title("sing-in Screen")
@@ -18,11 +19,27 @@ class Sing:
 
     # Validation function for login
     def validate_password(self):
-        password = self.password_entry.get()
-        confirmpassword = self.comfirmpassword_entry.get()
-        fullname = self.fullname_entry.get()
 
-        if password == confirmpassword and self.validate_input(fullname):
+        conn = sqlite3.connect('teste_database.db')
+        cursor = conn.cursor()
+
+        s_full_name = self.fullname_entry.get()
+        s_user = self.username_entry.get()
+        s_number = "111"
+        s_password = self.password_entry.get()
+        s_password = hashlib.sha256(s_password.encode()).hexdigest()
+
+        s_comfirmpassword = self.comfirmpassword_entry.get()
+        s_comfirmpassword = hashlib.sha256(s_comfirmpassword.encode()).hexdigest()
+        
+        
+        
+        if s_password == s_comfirmpassword and self.validate_input(s_full_name):
+            cursor.execute("""
+            INSERT INTO user(full_name,saldo, user,number, password)
+            VALUES (?,?,?,?)
+            """, (s_full_name, s_user, s_number, s_password))
+            conn.commit()
             self.label.config(text="Everything is correct", fg="green")
         else:
             self.label.config(text="Passwords are not equal", fg="red")
