@@ -12,13 +12,39 @@ class Sing:
             return True
         else:
             return False
+        
+    
+    def validade_password(self):
+        l, u, p, d = 0, 0, 0, 0
+        #s = "R@m@_f0rtu9e$"
+        capitalalphabets="ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        smallalphabets="abcdefghijklmnopqrstuvwxyz"
+        specialchar="$@_"
+        digits="0123456789"
+        if (len(password) >= 8):
+            for i in password:
+                # counting lowercase alphabets
+                if (i in smallalphabets) and (i in capitalalphabets) and (i in digits) and (i in specialchar):
+                    l+=1	
+                    p+=1	
+                    u+=1
+                    d+=1
+                    	
+        
+         
+
+        if (l>=1 and u>=1 and p>=1 and d>=1 and l+p+u+d==len(password)):
+            print("Valid Password")
+        else:
+            print("Invalid Password")
+
     
     def link(self):
         from login_system import Login 
         Login()
 
     # Validation function for login
-    def validate_password(self):
+    def validate_password(self,passoword):
 
         conn = sqlite3.connect('teste_database.db')
         cursor = conn.cursor()
@@ -26,24 +52,23 @@ class Sing:
         s_full_name = self.fullname_entry.get()
         s_user = self.username_entry.get()
         s_number = "111"
-        s_password = self.password_entry.get()
-        s_password = hashlib.sha256(s_password.encode()).hexdigest()
-
+        password = self.password_entry.get()
+        s_password = hashlib.sha256(password.encode()).hexdigest()
+  
         s_comfirmpassword = self.comfirmpassword_entry.get()
-        s_comfirmpassword = hashlib.sha256(s_comfirmpassword.encode()).hexdigest()
-        
-        
-        
-        if s_password == s_comfirmpassword and self.validate_input(s_full_name):
-            cursor.execute("""
-            INSERT INTO user(full_name,saldo, user,number, password)
-            VALUES (?,?,?,?)
-            """, (s_full_name, s_user, s_number, s_password))
-            conn.commit()
-            self.label.config(text="Everything is correct", fg="green")
+        s_comfirmpassword = hashlib.sha256(s_comfirmpassword.encode()).hexdigest() 
+        if self.validade_password(password):
+            if self.validate_input(s_full_name):
+                cursor.execute("""
+                INSERT INTO user(full_name,saldo, user,number, password)
+                VALUES (?,?,?,?)
+                """, (s_full_name, s_user, s_number, s_password))
+                conn.commit()
+                self.label.config(text="Everything is correct", fg="green")
+            else:
+                self.label.config(text="Passwords are not equal", fg="red")
         else:
-            self.label.config(text="Passwords are not equal", fg="red")
-
+            self.label.config(text="Passwords dont have special carater", fg="red")
     def __init__(self, root):
         # Full name label
         self.fullname_label = tk.Label(root, text="Full name")
